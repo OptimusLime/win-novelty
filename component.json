@@ -1,6 +1,6 @@
 {
   "name": "win-novelty",
-  "version": "0.0.1",
+  "version": "0.0.1-1",
   "description": "A package for running novelty as a WIN module. Handles behaviors and distance metrics and what have you. Separated from any notion of NEAT or NEAT Genotypes.",
   "scripts": [
     "lib/win-novelty.js",
@@ -9,6 +9,9 @@
   "main": "lib/win-novelty.js",
   "dependencies": {
     "optimuslime/win-utils": "*"
+  },
+  "development" : {
+    "optimuslime/win-backbone" : "*"
   },
   "repo": "OptimusLime/win-novelty"
 }

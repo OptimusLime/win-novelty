@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<title></title>
+	<script type="text/javascript" src="/build/build.js"></script>
+
+</head>
+<body class="flexcenter">
+
+	<div id="d3" style="height:100%;"> </div>
+
+	<!-- Now we start messing with the flex object -->
+	<script type="text/javascript">
+
+
+		window.onload = function() {
+
+			var winback = require('win-backbone');
+
+			var backbone, backEmit, backLog;
+			var evoTestEnd;
+			var count = 0;
+
+			var experimentModule = 
+			{
+				winFunction : "experiment",
+				eventCallbacks : function(){ return {}; },
+				requiredEvents : function() {
+					return [
+			        "novelty:measureNovelty"
+						];
+				}
+			};
+
+			//this is strictly a fact finding mission 
+			//now we access the backbone thorugh this html page yo yo yo yo yo
+			//do this up front yo
+	    	backbone = new winback();
+
+
+	    	var exampleJSON = 
+			{
+				"win-novelty" : require("win-novelty"),
+				"experiment" : experimentModule
+			};
+
+			var configurations = 
+			{
+				"global" : {
+					server : "http://localhost",
+					port: 3000
+				},
+				"win-novelty" : {
+					logLevel : backbone.testing
+				}
+			};
+
+	    	backbone.logLevel = backbone.testing;
+
+	    	backEmit = backbone.getEmitter(experimentModule);
+	    	backLog = backbone.getLogger({winFunction:experimentModule.winFunction});
+	    	backLog.logLevel = backbone.testing;
+
+	    	//loading modules is synchronous
+	    	backbone.loadModules(exampleJSON, configurations);
+
+	    	var randomUniformBehaviors = function(objectCount, length)
+			{
+			    var start = 0;
+			    var dx = 1.0/(objectCount -1);
+
+			    var behaviors = {};
+
+			    for(var i=0; i < objectCount; i++)
+			    {
+			        var tObject = {behaviors:[]};
+
+			        for(var b=0; b < length; b++)
+			            tObject.behaviors.push(start);
+
+			        behaviors[i] = tObject;
+
+			        start += dx;
+			    }
+
+			    return behaviors;
+			}
+
+	    	backbone.initializeModules(function()
+	    	{
+	    		backLog("Finished Module Init! Ready for win communications");
+
+	    		var rObjects = 1 + Math.floor(Math.random()*5);
+	    		var rLength = 2 + Math.floor(Math.random()*5);
+
+	    		var behaviors= randomUniformBehaviors(rObjects, rLength);
+
+	    		backLog("behaviors: ", behaviors);
+
+	    		//let's measure some novelty of random behavior
+		        backEmit("novelty:measureNovelty", behaviors, function(err, results)
+	        	{	
+	        		if(err)
+	        		{
+	        			console.error(err);
+	        			return;
+	        		}
+	        		
+    				backLog("Novelty results returned: ", results);
+
+	        	});
+	    	});
+		}
+
+
+
+	
+	</script>
+
+
+
+
+</body>
+</html>
